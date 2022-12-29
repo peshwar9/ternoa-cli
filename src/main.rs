@@ -1,11 +1,10 @@
-use subxt::{OnlineClient, PolkadotConfig,ext::sp_runtime::{AccountId32,}};
+use subxt::{ext::sp_runtime::AccountId32, OnlineClient, PolkadotConfig};
 
 #[subxt::subxt(runtime_metadata_path = "./metadata-mainnet.scale")]
 pub mod polkadot {}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-
     // Create API client for Ternoa chain
     let api = OnlineClient::<PolkadotConfig>::from_url("wss://mainnet.ternoa.network:443").await?;
 
@@ -17,6 +16,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     } else {
         nominator_count = 0;
     }
-    println!("Nominator count = {:?} ",nominator_count);
+    println!("Nominator count = {:?} ", nominator_count);
     Ok(())
 }
