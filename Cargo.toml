@@ -14,3 +14,8 @@ codec = {package = "parity-scale-codec", version = "3.0.0", default_features = f
 hex = "0.4.3"
 hex-literal = "0.3.4"
 tracing-subscriber = "0.3.11"
+clap = { version = "4.0.32", features = ["derive"] }
+# indicatif = "0.17.2"
+
+[features]
+command = []
