@@ -1,0 +1,16 @@
+[package]
+name = "ternoa-cli"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+subxt = "0.25.0"
+tokio = {version = "1.8", features = ["rt-multi-thread", "macros", "time"]}
+sp-keyring = "7.0.0"
+futures = "0.3.13"
+codec = {package = "parity-scale-codec", version = "3.0.0", default_features = false, features = ["derive", "full", "bitvec"]}
+hex = "0.4.3"
+hex-literal = "0.3.4"
+tracing-subscriber = "0.3.11"
