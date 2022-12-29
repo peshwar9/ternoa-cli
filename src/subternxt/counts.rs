@@ -1,4 +1,4 @@
-use subxt::{ext::sp_runtime::AccountId32, OnlineClient, PolkadotConfig};
+use subxt::{OnlineClient, PolkadotConfig};
 
 #[subxt::subxt(runtime_metadata_path = "./metadata-mainnet.scale")]
 pub mod polkadot {}

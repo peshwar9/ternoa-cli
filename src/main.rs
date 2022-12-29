@@ -2,12 +2,14 @@ mod subternxt;
 use subternxt::counts::get_nominator_count;
 
 // Clap
-use ::clap::{Parser, Subcommand, Args};
+use ::clap::{Args, Parser, Subcommand};
 
 #[derive(Parser)]
 #[command(author, version)]
-#[command(about = "stringer - a simple CLI to transform and inspect strings", long_about = "stringer is a super fancy CLI (kidding)
-One can use stringer to modify or inspect strings straight from the terminal")]
+#[command(
+    about = "Ternoa CLI - a CLI to interact with the Ternoa chain",
+    long_about = "Ternoa CLI allows you to query and perform transactions on the Ternoa chain"
+)]
 struct Cli {
     #[command(subcommand)]
     command: Option<Commands>,
@@ -40,41 +42,34 @@ enum CountOptions {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-   //Parse commandline
+    //Parse commandline
     let cli = Cli::parse();
 
     match &cli.command {
-        Some(Commands::State(name)) => {
-            match name.string {
-                Some(ref _name) => {
-                    println!("Hello not implemented yet");
-                }
-                None => {
-                    println!("Please provide a parameter for which you want the State");
+        Some(Commands::State(name)) => match name.string {
+            Some(ref _name) => {
+                println!("Hello not implemented yet");
+            }
+            None => {
+                println!("Please provide a parameter for which you want the State");
+            }
+        },
+        Some(Commands::Count(name)) => match name.string {
+            Some(ref name) => {
+                if name == "Nominators" {
+                    let nominator_count = get_nominator_count().await?;
+                    println!("Nominator count = {} ", nominator_count);
+                } else {
+                    println!("Sorry, not yet implemented");
                 }
             }
-        }
-        Some(Commands::Count(name)) => {
-            match name.string {
-                Some(ref name) => {
-                    if name == "Nominators" {
-                        let nominator_count = get_nominator_count().await?;
-                        println!("Nominator count = {} ", nominator_count);
-                    } else {
-                        println!("Sorry, not yet implemented");
-                    }
-                },
-                None => {
-                    println!("Please provide a parameter for which you want the Count");
-                }
+            None => {
+                println!("Please provide a parameter for which you want the Count");
             }
-
         },
         None => {
             println!("Please provide a valid parameter");
-        }
-
-        // Nominator
+        } // Nominator
     }
     Ok(())
 }
