@@ -12,7 +12,7 @@ use crate::subternxt::{
 use ::clap::{Args, Parser, Subcommand};
 
 #[derive(Parser)]
-#[command(author = "Prabhu Eshwarla", version = "0.1.0")]
+#[command(author = "Prabhu Eshwarla", version)]
 #[command(
     about = "Ternoa CLI - a CLI to interact with the Ternoa chain",
     long_about = "Ternoa CLI allows you to query and perform transactions on the Ternoa chain"
