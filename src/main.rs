@@ -1,5 +1,8 @@
 mod subternxt;
-use crate::subternxt::counts::{get_nominator_count, get_nft_count};
+use crate::subternxt::{
+    counts::{get_nft_count, get_nominator_count},
+    state::get_current_era,
+};
 
 // Clap
 use ::clap::{Args, Parser, Subcommand};
@@ -47,8 +50,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match &cli.command {
         Some(Commands::State(name)) => match name.string {
-            Some(ref _name) => {
-                println!("Hello not implemented yet");
+            Some(ref name) => {
+                if name == "current_era" {
+                    let current_era = get_current_era().await?;
+                    println!("Current Era is  {} ", current_era);
+                } else {
+                    println!("Hello not implemented yet");
+                }
             }
             None => {
                 println!("Please provide a parameter for which you want the State");
@@ -56,17 +64,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         },
         Some(Commands::Count(name)) => match name.string {
             Some(ref name) => {
-                if name == "Nominators" {
+                if name == "nominators" {
                     let nominator_count = get_nominator_count().await?;
                     println!("Nominator count = {} ", nominator_count);
-                } else if name == "Nfts" {
-                        let nft_count = get_nft_count().await?;
-                        println!("Nft count = {} ", nft_count);
-                }
-                else {
+                } else if name == "nfts" {
+                    let nft_count = get_nft_count().await?;
+                    println!("Nft count = {} ", nft_count);
+                } else {
                     println!("Sorry, not yet implemented");
                 }
-            },
+            }
             None => {
                 println!("Please provide a parameter for which you want the Count");
             }
