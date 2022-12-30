@@ -1,0 +1,12 @@
+query TotalTransactions {
+
+extrinsics(
+    filter: {
+      module: {
+        notEqualTo: "timestamp"
+      }
+    }
+  ) {
+    totalCount
+  }
+}

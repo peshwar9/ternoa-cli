@@ -4,7 +4,7 @@ use std::error::Error;
 
 #[derive(GraphQLQuery)]
 #[graphql(
-    schema_path = "src/subternxt/graphql/schemas/mainnet_graphql_schema.json",
+    schema_path = "src/subternxt/graphql/schemas/mainnet_indexer_schema.json",
     query_path = "src/subternxt/graphql/queries/active_wallets.graphql",
     response_derives = "Debug"
 )]
