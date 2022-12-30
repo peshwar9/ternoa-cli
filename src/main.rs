@@ -1,7 +1,8 @@
 mod subternxt;
-use crate::subternxt::constants::{ALPHANET_URL, MAINNET_URL};
+use crate::subternxt::constants::{ALPHANET_CHAIN_URL, MAINNET_CHAIN_URL, MAINNET_GRAPHQL_URL};
 use crate::subternxt::{
     counts::{get_active_validators, get_nft_count, get_nominator_count, get_total_validators},
+    graphql::active_wallets::get_active_wallets,
     state::get_current_era,
 };
 
@@ -59,6 +60,8 @@ enum CountParameter {
     TotalValidators,
     /// Shows the total number of only the active validators on Ternoa chain
     ActiveValidators,
+    /// Shows the total number of active wallets (available only for mainnet)
+    ActiveWallets,
 }
 
 #[tokio::main]
@@ -68,14 +71,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let network: String = if let Some(chain_name) = cli.network {
         println!("Network selected is: {}", chain_name);
         if chain_name.to_lowercase() == "mainnet" {
-            MAINNET_URL.to_string()
+            MAINNET_CHAIN_URL.to_string()
         } else if chain_name.to_lowercase() == "alphanet" {
-            ALPHANET_URL.to_string()
+            ALPHANET_CHAIN_URL.to_string()
         } else {
             chain_name
         }
     } else {
-        MAINNET_URL.to_string()
+        MAINNET_CHAIN_URL.to_string()
     };
 
     match &cli.command {
@@ -101,6 +104,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             CountParameter::ActiveValidators => {
                 let active_validators = get_active_validators(network).await?;
                 println!("Active validators = {} ", active_validators);
+            }
+            CountParameter::ActiveWallets => {
+                let active_wallets = get_active_wallets(MAINNET_GRAPHQL_URL.to_string()).await?;
+                println!("Active wallets on the Mainnet = {:?} ", active_wallets);
             }
         },
         None => {
