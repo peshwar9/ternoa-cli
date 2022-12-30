@@ -29,18 +29,33 @@ enum Commands {
 #[derive(Args)]
 struct State {
     /// The parameter for which state is requested
-    string: Option<String>,
+    #[command(subcommand)]
+    state_parameter: StateParameter,
+}
+
+#[derive(Subcommand)]
+enum StateParameter {
+    /// Returns the current era the chain is in
+    CurrentEra,
 }
 
 #[derive(Args)]
 struct Count {
     /// The parameter for which count is requested
-    string: Option<String>,
+    #[command(subcommand)]
+    count_parameter: CountParameter,
 }
 
-enum CountOptions {
+#[derive(Subcommand)]
+enum CountParameter {
+    /// Shows the total count of NFTs in Ternoa chain
     Nfts,
+    /// Shows the total number of nominators on Ternoa chain
     Nominators,
+    /// Shows the total number of validators on Ternoa chain
+    TotalValidators,
+    /// Shows the total number of only the active validators on Ternoa chain
+    ActiveValidators,
 }
 
 #[tokio::main]
@@ -49,39 +64,28 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
 
     match &cli.command {
-        Some(Commands::State(name)) => match name.string {
-            Some(ref name) => {
-                if name == "current_era" {
-                    let current_era = get_current_era().await?;
-                    println!("Current Era is  {} ", current_era);
-                } else {
-                    println!("Hello not implemented yet");
-                }
-            }
-            None => {
-                println!("Please provide a parameter for which you want the State");
+        Some(Commands::State(name)) => match name.state_parameter {
+            StateParameter::CurrentEra => {
+                let current_era = get_current_era().await?;
+                println!("Current Era is  {} ", current_era);
             }
         },
-        Some(Commands::Count(name)) => match name.string {
-            Some(ref name) => {
-                if name == "nominators" {
-                    let nominator_count = get_nominator_count().await?;
-                    println!("Nominator count = {} ", nominator_count);
-                } else if name == "nfts" {
-                    let nft_count = get_nft_count().await?;
-                    println!("Nft count = {} ", nft_count);
-                } else if name == "total_validators" {
-                    let total_validators = get_total_validators().await?;
-                    println!("Active validators = {} ", total_validators);
-                } else if name == "active_validators" {
-                    let active_validators = get_active_validators().await?;
-                    println!("Total validators = {} ", active_validators);
-                } else {
-                    println!("Sorry, not yet implemented");
-                }
+        Some(Commands::Count(name)) => match name.count_parameter {
+            CountParameter::Nominators => {
+                let nominator_count = get_nominator_count().await?;
+                println!("Nominator count = {} ", nominator_count);
             }
-            None => {
-                println!("Please provide a parameter for which you want the Count");
+            CountParameter::Nfts => {
+                let nft_count = get_nft_count().await?;
+                println!("Nft count = {} ", nft_count);
+            }
+            CountParameter::TotalValidators => {
+                let total_validators = get_total_validators().await?;
+                println!("Total validators = {} ", total_validators);
+            }
+            CountParameter::ActiveValidators => {
+                let active_validators = get_active_validators().await?;
+                println!("Active validators = {} ", active_validators);
             }
         },
         None => {
