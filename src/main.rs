@@ -1,6 +1,6 @@
 mod subternxt;
 use crate::subternxt::{
-    counts::{get_nft_count, get_nominator_count},
+    counts::{get_active_validators, get_nft_count, get_nominator_count, get_total_validators},
     state::get_current_era,
 };
 
@@ -70,6 +70,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 } else if name == "nfts" {
                     let nft_count = get_nft_count().await?;
                     println!("Nft count = {} ", nft_count);
+                } else if name == "total_validators" {
+                    let total_validators = get_total_validators().await?;
+                    println!("Active validators = {} ", total_validators);
+                } else if name == "active_validators" {
+                    let active_validators = get_active_validators().await?;
+                    println!("Total validators = {} ", active_validators);
                 } else {
                     println!("Sorry, not yet implemented");
                 }
