@@ -18,11 +18,7 @@ pub async fn get_total_transactions(network: String) -> Result<i64, Box<dyn Erro
     let res = client.post(network).json(&request_body).send().await?;
     let response_body: Response<total_transactions::ResponseData> = res.json().await?;
 
-    // response_body.data: Response { data: Some(ResponseData { extrinsics: Some(TotalTransactionsExtrinsics { total_count: nnnnn }) }), errors: None }
-    // response_body.data.extrinsics: Some(TotalTransactionsExtrinsics { total_count: nnnn })
     let total_count = if let Some(ref response_data) = response_body.data {
-        //println!("{:?}", response_data.extrinsics);
-
         if let Some(total_txns) = &response_data.extrinsics {
             total_txns.total_count
         } else {
