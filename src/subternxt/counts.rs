@@ -17,3 +17,18 @@ pub async fn get_nominator_count() -> Result<u32, Box<dyn std::error::Error>> {
     }
     Ok(nominator_count)
 }
+
+pub async fn get_nft_count() -> Result<u32, Box<dyn std::error::Error>> {
+    // Create API client for Ternoa chain
+    let api = OnlineClient::<PolkadotConfig>::from_url("wss://mainnet.ternoa.network:443").await?;
+
+    // Get number of nominators
+    let mut nft_count = 0;
+    let count_query = polkadot::storage().nft().next_nft_id();
+    if let Some(count) = api.storage().fetch(&count_query, None).await? {
+        nft_count = count;
+    } else {
+        nft_count = 0;
+    }
+    Ok(nft_count)
+}

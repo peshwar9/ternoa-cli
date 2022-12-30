@@ -1,5 +1,5 @@
 mod subternxt;
-use subternxt::counts::get_nominator_count;
+use crate::subternxt::counts::{get_nominator_count, get_nft_count};
 
 // Clap
 use ::clap::{Args, Parser, Subcommand};
@@ -59,17 +59,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 if name == "Nominators" {
                     let nominator_count = get_nominator_count().await?;
                     println!("Nominator count = {} ", nominator_count);
-                } else {
+                } else if name == "Nfts" {
+                        let nft_count = get_nft_count().await?;
+                        println!("Nft count = {} ", nft_count);
+                }
+                else {
                     println!("Sorry, not yet implemented");
                 }
-            }
+            },
             None => {
                 println!("Please provide a parameter for which you want the Count");
             }
         },
         None => {
             println!("Please provide a valid parameter");
-        } // Nominator
+        }
     }
     Ok(())
 }
