@@ -62,9 +62,9 @@ enum CountParameter {
     TotalValidators,
     /// Shows the total number of only the active validators on Ternoa chain
     ActiveValidators,
-    /// Shows the total number of active wallets (available only for the Mainnet)
+    /// Shows the total number of active wallets from indexer (available only for the Mainnet)
     ActiveWallets,
-    /// Shows the total number of transactions on chain (available only for the Mainnet)
+    /// Shows the total number of transactions on chain from dictionary (available only for the Mainnet)
     TotalTransactions,
 }
 
