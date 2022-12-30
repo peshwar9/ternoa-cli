@@ -3,9 +3,9 @@ use subxt::{OnlineClient, PolkadotConfig};
 #[subxt::subxt(runtime_metadata_path = "./metadata-mainnet.scale")]
 pub mod polkadot {}
 
-pub async fn get_nominator_count() -> Result<u32, Box<dyn std::error::Error>> {
+pub async fn get_nominator_count(chain_url: String) -> Result<u32, Box<dyn std::error::Error>> {
     // Create API client for Ternoa chain
-    let api = OnlineClient::<PolkadotConfig>::from_url("wss://mainnet.ternoa.network:443").await?;
+    let api = OnlineClient::<PolkadotConfig>::from_url(chain_url).await?;
 
     // Get number of nominators
     let nominator_count;
@@ -18,9 +18,9 @@ pub async fn get_nominator_count() -> Result<u32, Box<dyn std::error::Error>> {
     Ok(nominator_count)
 }
 
-pub async fn get_nft_count() -> Result<u32, Box<dyn std::error::Error>> {
+pub async fn get_nft_count(chain_url: String) -> Result<u32, Box<dyn std::error::Error>> {
     // Create API client for Ternoa chain
-    let api = OnlineClient::<PolkadotConfig>::from_url("wss://mainnet.ternoa.network:443").await?;
+    let api = OnlineClient::<PolkadotConfig>::from_url(chain_url).await?;
 
     // Get nft count
     let nft_count;
@@ -33,9 +33,9 @@ pub async fn get_nft_count() -> Result<u32, Box<dyn std::error::Error>> {
     Ok(nft_count)
 }
 
-pub async fn get_active_validators() -> Result<u32, Box<dyn std::error::Error>> {
+pub async fn get_active_validators(chain_url: String) -> Result<u32, Box<dyn std::error::Error>> {
     // Create API client for Ternoa chain
-    let api = OnlineClient::<PolkadotConfig>::from_url("wss://mainnet.ternoa.network:443").await?;
+    let api = OnlineClient::<PolkadotConfig>::from_url(chain_url).await?;
 
     // Get Active validators
     let active_validator_count;
@@ -48,9 +48,9 @@ pub async fn get_active_validators() -> Result<u32, Box<dyn std::error::Error>> 
     Ok(active_validator_count)
 }
 
-pub async fn get_total_validators() -> Result<u32, Box<dyn std::error::Error>> {
+pub async fn get_total_validators(chain_url: String) -> Result<u32, Box<dyn std::error::Error>> {
     // Create API client for Ternoa chain
-    let api = OnlineClient::<PolkadotConfig>::from_url("wss://mainnet.ternoa.network:443").await?;
+    let api = OnlineClient::<PolkadotConfig>::from_url(chain_url).await?;
 
     // Get All validators
     let total_validator_count;
