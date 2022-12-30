@@ -2,10 +2,6 @@
 name = "ternoa-cli"
 version = "0.1.0"
 edition = "2021"
-authors = ["peshwar9<par.esh1937@gmail.com>"]
-description = "Connects to Ternoa chain infra and executes queries and transactions"
-repository = "https://github.com/peshwar9/ternoa-cli/blob/master/src/main.rs"
-license = "GNU GPL 3"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
