@@ -10,12 +10,11 @@ use std::error::Error;
 )]
 pub struct AccountEntities;
 
-pub async fn get_active_wallets(network: String) -> Result<i64, Box<dyn Error>> {
-    println!("Get active wallets: This feature is only available for the mainnet");
+pub async fn get_active_wallets(url: String) -> Result<i64, Box<dyn Error>> {
     let request_body = AccountEntities::build_query(account_entities::Variables);
 
     let client = reqwest::Client::new();
-    let res = client.post(network).json(&request_body).send().await?;
+    let res = client.post(url).json(&request_body).send().await?;
     let response_body: Response<account_entities::ResponseData> = res.json().await?;
 
     let total_count = if let Some(ref response_data) = response_body.data {

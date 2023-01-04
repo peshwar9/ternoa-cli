@@ -1,6 +1,6 @@
 mod subternxt;
 use crate::subternxt::constants::{
-    ALPHANET_CHAIN_URL, MAINNET_CHAIN_URL, ALPHANET_DICTIONARY_URL, MAINNET_DICTIONARY_URL, MAINNET_INDEXER_URL,
+    ALPHANET_CHAIN_URL, MAINNET_CHAIN_URL, ALPHANET_DICTIONARY_URL, MAINNET_DICTIONARY_URL, ALPHANET_INDEXER_URL, MAINNET_INDEXER_URL,
 };
 use crate::subternxt::{
     counts::{get_active_validators, get_nft_count, get_nominator_count, get_total_validators},
@@ -92,7 +92,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //Parse commandline
     let cli = Cli::parse();
 
-    let (network, dictionary_url) = if let Some(ref chain_name) = cli.network {
+    let (network, indexer_url, dictionary_url) = if let Some(ref chain_name) = cli.network {
         println!("Network selected is: {}", chain_name);
 
         let chain_name = chain_name.to_lowercase();
@@ -102,15 +102,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             _ => &chain_name,
         };
 
+        let indexer_url = match chain_name.as_str() {
+            "mainnet" => MAINNET_INDEXER_URL,
+            "alphanet" => ALPHANET_INDEXER_URL,
+            _ => &chain_name,
+        };
+
         let dictionary_url = match chain_name.as_str() {
             "mainnet" => MAINNET_DICTIONARY_URL,
             "alphanet" => ALPHANET_DICTIONARY_URL,
             _ => &chain_name,
         };
 
-        (chain_url.to_string(), dictionary_url.to_string())
+        (chain_url.to_string(), indexer_url.to_string(), dictionary_url.to_string())
     } else {
-        (MAINNET_CHAIN_URL.to_string(), MAINNET_DICTIONARY_URL.to_string())
+        (MAINNET_CHAIN_URL.to_string(), MAINNET_INDEXER_URL.to_string(), MAINNET_DICTIONARY_URL.to_string())
     };
 
     match &cli.command {
@@ -152,12 +158,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 println!("Active validators = {} ", active_validators);
             }
             CountParameter::ActiveWallets => {
-                let active_wallets = get_active_wallets(MAINNET_INDEXER_URL.to_string()).await?;
+                let active_wallets = get_active_wallets(indexer_url).await?;
                 println!("Active wallets on the Mainnet = {:?} ", active_wallets);
             }
             CountParameter::TotalTransactions => {
                 let total_transactions =
-                    get_total_transactions(MAINNET_DICTIONARY_URL.to_string()).await?;
+                    get_total_transactions(dictionary_url).await?;
                 println!(
                     "Total transactions on the Mainnet = {:?} ",
                     total_transactions
