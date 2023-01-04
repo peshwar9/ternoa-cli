@@ -1,0 +1,13 @@
+query GetFirstItemBlockId($event: String!) {
+  events(
+    first: 1
+    orderBy: [BLOCK_HEIGHT_ASC, EVENT_INDEX_ASC]
+    filter: {
+        call: { equalTo: $event }
+    }
+  ) {
+    nodes {
+      blockId
+    }
+  }
+}

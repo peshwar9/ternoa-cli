@@ -1,10 +1,10 @@
 mod subternxt;
 use crate::subternxt::constants::{
-    ALPHANET_CHAIN_URL, MAINNET_CHAIN_URL, MAINNET_DICTIONARY_URL, MAINNET_INDEXER_URL,
+    ALPHANET_CHAIN_URL, MAINNET_CHAIN_URL, ALPHANET_DICTIONARY_URL, MAINNET_DICTIONARY_URL, ALPHANET_INDEXER_URL, MAINNET_INDEXER_URL,
 };
 use crate::subternxt::{
     counts::{get_active_validators, get_nft_count, get_nominator_count, get_total_validators},
-    graphql::{active_wallets::get_active_wallets, total_transactions::get_total_transactions},
+    graphql::{active_wallets::get_active_wallets, first_item_block_id::get_first_item_block_id, total_transactions::get_total_transactions},
     state::get_current_era,
 };
 
@@ -26,10 +26,29 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
+    /// Provides block ID for major events from Ternoa chain
+    Block(Block),
     /// Provides the current state of the parameter from Ternoa chain
     State(State),
     /// Provides a count of the parameter from Ternoa chain
     Count(Count),
+}
+
+#[derive(Args)]
+struct Block {
+    /// The parameter for which block is requested
+    #[command(subcommand)]
+    block_parameter: BlockParameter,
+}
+
+#[derive(Subcommand)]
+enum BlockParameter {
+    /// Returns the block ID of the first NFT minted
+    FirstNFT,
+    /// Returns the block ID of the first Collection minted
+    FirstCollection,
+    /// Returns the block ID of the first Marketplace created
+    FirstMarketplace
 }
 
 #[derive(Args)]
@@ -72,20 +91,49 @@ enum CountParameter {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     //Parse commandline
     let cli = Cli::parse();
-    let network: String = if let Some(chain_name) = cli.network {
+
+    let (network, indexer_url, dictionary_url) = if let Some(ref chain_name) = cli.network {
         println!("Network selected is: {}", chain_name);
-        if chain_name.to_lowercase() == "mainnet" {
-            MAINNET_CHAIN_URL.to_string()
-        } else if chain_name.to_lowercase() == "alphanet" {
-            ALPHANET_CHAIN_URL.to_string()
-        } else {
-            chain_name
-        }
+
+        let chain_name = chain_name.to_lowercase();
+        let chain_url = match chain_name.as_str() {
+            "mainnet" => MAINNET_CHAIN_URL,
+            "alphanet" => ALPHANET_CHAIN_URL,
+            _ => &chain_name,
+        };
+
+        let indexer_url = match chain_name.as_str() {
+            "mainnet" => MAINNET_INDEXER_URL,
+            "alphanet" => ALPHANET_INDEXER_URL,
+            _ => &chain_name,
+        };
+
+        let dictionary_url = match chain_name.as_str() {
+            "mainnet" => MAINNET_DICTIONARY_URL,
+            "alphanet" => ALPHANET_DICTIONARY_URL,
+            _ => &chain_name,
+        };
+
+        (chain_url.to_string(), indexer_url.to_string(), dictionary_url.to_string())
     } else {
-        MAINNET_CHAIN_URL.to_string()
+        (MAINNET_CHAIN_URL.to_string(), MAINNET_INDEXER_URL.to_string(), MAINNET_DICTIONARY_URL.to_string())
     };
 
     match &cli.command {
+        Some(Commands::Block(name)) => match name.block_parameter {
+            BlockParameter::FirstNFT => {
+                let block_id = get_first_item_block_id(dictionary_url, "NFTCreated".to_string()).await?;
+                println!("First NFT minted on block {} ", block_id);
+            },
+            BlockParameter::FirstCollection => {
+                let block_id = get_first_item_block_id(dictionary_url, "CollectionCreated".to_string()).await?;
+                println!("First Collection minted on block {} ", block_id);
+            },
+            BlockParameter::FirstMarketplace => {
+                let block_id = get_first_item_block_id(dictionary_url, "MarketplaceCreated".to_string()).await?;
+                println!("First Marketplace created on block {} ", block_id);
+            }
+        },
         Some(Commands::State(name)) => match name.state_parameter {
             StateParameter::CurrentEra => {
                 let current_era = get_current_era(network).await?;
@@ -110,12 +158,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 println!("Active validators = {} ", active_validators);
             }
             CountParameter::ActiveWallets => {
-                let active_wallets = get_active_wallets(MAINNET_INDEXER_URL.to_string()).await?;
+                let active_wallets = get_active_wallets(indexer_url).await?;
                 println!("Active wallets on the Mainnet = {:?} ", active_wallets);
             }
             CountParameter::TotalTransactions => {
                 let total_transactions =
-                    get_total_transactions(MAINNET_DICTIONARY_URL.to_string()).await?;
+                    get_total_transactions(dictionary_url).await?;
                 println!(
                     "Total transactions on the Mainnet = {:?} ",
                     total_transactions
